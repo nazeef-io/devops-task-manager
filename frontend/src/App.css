@@ -1,0 +1,181 @@
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.app-header h1 {
+  font-size: 1.75rem;
+  margin: 0;
+}
+
+.task-form {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(9, 30, 66, 0.15);
+  margin-bottom: 24px;
+}
+
+.task-form h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.form-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #44546f;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 8px 10px;
+  border: 1px solid #dfe1e6;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #0052cc;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background-color: #ebecf0;
+  color: #172b4d;
+}
+
+.btn-small {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+}
+
+.btn-danger {
+  background-color: #ffebe6;
+  color: #bf2600;
+}
+
+.error-banner {
+  background-color: #ffebe6;
+  color: #bf2600;
+  padding: 10px 14px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.loading-state,
+.empty-state {
+  text-align: center;
+  color: #6b778c;
+  padding: 24px 0;
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-item {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(9, 30, 66, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.task-item.completed {
+  opacity: 0.7;
+}
+
+.task-item.completed h3 {
+  text-decoration: line-through;
+}
+
+.task-content {
+  flex: 1;
+}
+
+.task-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.status-badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.status-badge.pending {
+  background-color: #fff0b3;
+  color: #7f5f01;
+}
+
+.status-badge.completed {
+  background-color: #e3fcef;
+  color: #006644;
+}
+
+.task-description {
+  margin: 8px 0 4px;
+  color: #44546f;
+  font-size: 0.9rem;
+}
+
+.task-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: #97a0af;
+  margin-top: 8px;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
