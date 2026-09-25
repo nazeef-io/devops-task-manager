@@ -10,25 +10,24 @@
         }
 
 
-        stage('Build Frontend Image') {
+    stage('Build Frontend Image') {
         steps {
             echo 'Building frontend Docker image...'
             sh 'docker build --build-arg VITE_API_BASE_URL=http://192.168.56.101:5000/api -t task-frontend:${BUILD_NUMBER} ./frontend'
         }
     }
                               
-        stage('Scan Frontend Image') {
-            steps {
-                echo 'Scanning frontend Docker image...'
-                sh '''
-                    docker run --rm \
-                        -v /var/run/docker.sock:/var/run/docker.sock \
-			-v $(pwd)/fronted/.trivyignore:/.trivyignore \
-                        aquasec/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 task-frontend:${BUILD_NUMBER}
-                '''
-
-            }
+    stage('Scan Frontend Image') {
+    	steps {
+    	    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            sh '''
+            	    docker run --rm \
+                    -v /var/run/docker.sock:/var/run/docker.sock \
+                    aquasec/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 task-frontend:${BUILD_NUMBER}
+        	    '''
         }
+    }
+}
 
         stage('Push Frontend Image') {
             steps {
