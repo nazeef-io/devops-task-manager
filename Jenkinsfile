@@ -1,7 +1,8 @@
- pipeline {
+pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 echo 'Checking out source code...'
@@ -9,27 +10,35 @@
             }
         }
 
+        // ---------------- FRONTEND ----------------
 
-    stage('Build Frontend Image') {
-        steps {
-            echo 'Building frontend Docker image...'
-            sh 'docker build --build-arg VITE_API_BASE_URL=http://192.168.56.101:5000/api -t task-frontend:${BUILD_NUMBER} ./frontend'
+        stage('Build Frontend Image') {
+            steps {
+                echo 'Building frontend Docker image...'
+                sh 'docker build --build-arg VITE_API_BASE_URL=http://192.168.56.101:5000/api -t task-frontend:${BUILD_NUMBER} ./frontend'
+            }
         }
-    }
-                              
-    stage('Scan Frontend Image') {
-    	steps {
-    	    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-            sh '''
-            	    docker run --rm \
-                    -v /var/run/docker.sock:/var/run/docker.sock \
-                    aquasec/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 task-frontend:${BUILD_NUMBER}
-        	    '''
+
+        stage('Scan Frontend Image') {
+            steps {
+                script {
+                    env.FRONTEND_SCAN_PASSED = 'false'
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        sh '''
+                            docker run --rm \
+                                -v /var/run/docker.sock:/var/run/docker.sock \
+                                aquasec/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 task-frontend:${BUILD_NUMBER}
+                        '''
+                        env.FRONTEND_SCAN_PASSED = 'true'
+                    }
+                }
+            }
         }
-    }
-}
 
         stage('Push Frontend Image') {
+            when {
+                environment name: 'FRONTEND_SCAN_PASSED', value: 'true'
+            }
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: '0b16352d-915d-4664-8b36-24416c33e4ef',
@@ -45,6 +54,7 @@
             }
         }
 
+        // ---------------- BACKEND ----------------
 
         stage('Build Backend Image') {
             steps {
@@ -53,20 +63,27 @@
             }
         }
 
-        stage('Scan Image') {
+        stage('Scan Backend Image') {
             steps {
-                     echo 'Scanning Docker image for vulnerabilities...'
-                     sh '''
-                           docker run --rm \
-                           -v /var/run/docker.sock:/var/run/docker.sock \
-                           -v $(pwd)/backend/.trivyignore:/.trivyignore \
-                           aquasec/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --ignorefile /.trivyignore task-backend:${BUILD_NUMBER}
-                       '''
-              }
+                script {
+                    env.BACKEND_SCAN_PASSED = 'false'
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        sh '''
+                            docker run --rm \
+                                -v /var/run/docker.sock:/var/run/docker.sock \
+                                -v $(pwd)/backend/.trivyignore:/.trivyignore \
+                                aquasec/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --ignorefile /.trivyignore task-backend:${BUILD_NUMBER}
+                        '''
+                        env.BACKEND_SCAN_PASSED = 'true'
+                    }
+                }
             }
+        }
 
-
-        stage('Push to Registry') {
+        stage('Push Backend Image') {
+            when {
+                environment name: 'BACKEND_SCAN_PASSED', value: 'true'
+            }
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: '0b16352d-915d-4664-8b36-24416c33e4ef',
@@ -82,8 +99,12 @@
             }
         }
 
-
     }
 
- }
-
+    post {
+        always {
+            echo "Frontend scan passed: ${env.FRONTEND_SCAN_PASSED}"
+            echo "Backend scan passed: ${env.BACKEND_SCAN_PASSED}"
+        }
+    }
+}
