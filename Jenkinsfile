@@ -31,16 +31,16 @@
                 }
             }
         }
-        stage('Scan Image') {
-           steps {
-                 echo 'Scanning Docker image for vulnerabilities...'
-                 sh '''
-                docker run --rm \
-                -v /var/run/docker.sock:/var/run/docker.sock \
-                aquasec/trivy image --severity HIGH,CRITICAL --exit-code 1 task-backend:${BUILD_NUMBER}
-                '''
-             }
-        }
+       stage('Scan Image') {
+            steps {
+                     echo 'Scanning Docker image for vulnerabilities...'
+                sh '''
+                    docker run --rm \
+                    -v /var/run/docker.sock:/var/run/docker.sock \
+                    aquasec/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 task-backend:${BUILD_NUMBER}
+                  '''
+              }
+            }
      
     }
 }
