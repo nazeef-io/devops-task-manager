@@ -19,14 +19,15 @@
         stage('Scan Image') {
             steps {
                      echo 'Scanning Docker image for vulnerabilities...'
-                sh '''
-                     docker run --rm \
-                    -v /var/run/docker.sock:/var/run/docker.sock \
-                    -v $(pwd)/.trivyignore:/.trivyignore \
-                     aquasec/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --ignorefile /.trivyignore task-backend:${BUILD_NUMBER}
-                    '''
+                     sh '''
+                           docker run --rm \
+                           -v /var/run/docker.sock:/var/run/docker.sock \
+                           -v $(pwd)/backend/.trivyignore:/.trivyignore \
+                           aquasec/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --ignorefile /.trivyignore task-backend:${BUILD_NUMBER}
+                       '''
               }
-            }
+            } 
+          
 
         stage('Push to Registry') {
             steps {
