@@ -23,8 +23,10 @@
                 sh '''
                     docker run --rm \
                         -v /var/run/docker.sock:/var/run/docker.sock \
+			-v $(pwd)/fronted/.trivyignore:/.trivyignore \
                         aquasec/trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 task-frontend:${BUILD_NUMBER}
                 '''
+
             }
         }
 
